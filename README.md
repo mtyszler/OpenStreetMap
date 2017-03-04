@@ -29,7 +29,7 @@ It is recommended that you start with the problem sets in your chosen course and
 Hint: You may want to start out by looking at a smaller sample of your region first when auditing it to make it easier to iterate on your investigation. 
 
 #### SQL
-Thoroughly audit and clean your dataset, converting it from XML to CSV format. Then import the cleaned .csv files into a SQL database using this schema or a custom schema of your choice.
+Thoroughly audit and clean your dataset, converting it from XML to CSV format. Then import the cleaned .csv files into a SQL database using this [schema](https://gist.github.com/swwelch/f1144229848b407e0a5d13fcb7fbbd6f) or a custom schema of your choice.
 
 
 ### Step Five - Explore your Database
