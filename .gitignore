@@ -1,2 +1,3 @@
 .ipynb_checkpoints/OpenStreeMap-checkpoint.ipynb
 .idea
+*.osm
