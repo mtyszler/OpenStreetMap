@@ -162,9 +162,9 @@ import xml.etree.cElementTree as ET
 
 import cerberus
 
-import schema
+import db_prep_schema
 
-OSM_PATH = "example.osm"
+OSM_PATH = "nieuwegein_sample.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -175,7 +175,7 @@ WAY_TAGS_PATH = "ways_tags.csv"
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
-SCHEMA = schema.schema
+SCHEMA = db_prep_schema.schema
 
 # Make sure the fields order in the csvs matches the column order in the sql table schema
 NODE_FIELDS = ['id', 'lat', 'lon', 'user', 'uid', 'version', 'changeset', 'timestamp']
