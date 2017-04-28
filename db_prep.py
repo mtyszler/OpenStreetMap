@@ -184,6 +184,9 @@ WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
+# supporting function:
+def improve_postcode(postcode):
+    return postcode.replace(" ", "")
 
 def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS,
                   problem_chars=PROBLEMCHARS, default_tag_type='regular'):
@@ -219,6 +222,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                     if potential_key == "postal_code":
                         potential_key = "postcode"
                         potential_type = "addr"
+
+                    if potential_key == "postcode":
+                        content.attrib['v'] = improve_postcode(content.attrib['v'])
 
                     # top level info:
                     temp['id'] = element.attrib['id']
@@ -256,6 +262,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                     if potential_key == "postal_code":
                         potential_key = "postcode"
                         potential_type = "addr"
+
+                    if potential_key == "postcode":
+                        content.attrib['v'] = improve_postcode(content.attrib['v'])
 
 
                     # top level info:
