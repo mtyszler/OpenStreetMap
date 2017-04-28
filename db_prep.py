@@ -187,6 +187,7 @@ WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 
 # supporting function:
 def improve_postcode(postcode):
+    # remove white space
     return postcode.replace(" ", "")
 
 def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS,
