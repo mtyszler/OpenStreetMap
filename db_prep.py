@@ -215,6 +215,11 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
                 # if no problem characters, add
                 if PROBLEMCHARS.search(potential_key) == None:
+                    ## correct for postal_code:
+                    if potential_key == "postal_code":
+                        potential_key = "postcode"
+                        potential_type = "addr"
+
                     # top level info:
                     temp['id'] = element.attrib['id']
                     temp['key'] = potential_key
@@ -246,6 +251,13 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
                 # if no problem characters, add
                 if PROBLEMCHARS.search(potential_key) == None:
+
+                    ## correct for postal_code:
+                    if potential_key == "postal_code":
+                        potential_key = "postcode"
+                        potential_type = "addr"
+
+
                     # top level info:
                     temp['id'] = element.attrib['id']
                     temp['key'] = potential_key
