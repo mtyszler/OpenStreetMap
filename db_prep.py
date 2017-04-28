@@ -165,6 +165,7 @@ import cerberus
 import db_prep_schema
 
 OSM_PATH = "nieuwegein_sample.osm"
+OSM_PATH = "nieuwegein.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -370,4 +371,5 @@ def process_map(file_in, validate):
 if __name__ == '__main__':
     # Note: Validation is ~ 10X slower. For the project consider using a small
     # sample of the map when validating.
-    process_map(OSM_PATH, validate=True)
+    #process_map(OSM_PATH, validate=True)
+    process_map(OSM_PATH, validate=False)
