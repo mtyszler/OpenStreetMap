@@ -17,7 +17,7 @@ id,key,value,type
 44841106,railway,level_crossing,regular
 44844351,name,Oudegein,regular
 44844351,source,AND,regular
-44844351,postal_code,3432,regular
+44844351,postcode,3432,addr
 44859348,bus,yes,regular
 44859348,name,Middenweg,regular
 44859348,public_transport,stop_position,regular
@@ -53,7 +53,7 @@ id,key,value,type
 45003146,traffic_calming,table,regular
 45003711,name,Huis De Geer,regular
 45003711,source,AND,regular
-45003711,postal_code,3438,regular
+45003711,postcode,3438,addr
 45012537,surface,paving_stones,regular
 45012537,traffic_calming,table,regular
 45018157,surface,paving_stones,regular
@@ -176,7 +176,7 @@ id,key,value,type
 364767585,name,Kynologenvereniging Nieuwegein,regular
 364767585,street,Galecopperzoom,addr
 364767585,country,NL,addr
-364767585,postcode,3437 PJ,addr
+364767585,postcode,3437PJ,addr
 364767585,housenumber,3,addr
 365924318,access,permissive,regular
 365924318,barrier,gate,regular
@@ -232,7 +232,7 @@ id,key,value,type
 380395207,source,survey,regular
 380395207,amenity,fast_food,regular
 380395207,street,Lekstraat,addr
-380395207,postcode,3433 ZB,addr
+380395207,postcode,3433ZB,addr
 380395207,housenumber,20,addr
 381958073,foot,yes,regular
 381958073,barrier,bollard,regular
@@ -255,7 +255,7 @@ id,key,value,type
 430401147,city,Nieuwegein,addr
 430401147,street,Passage,addr
 430401147,winkelnummer,1327,regular
-430401147,postcode,3431 LN,addr
+430401147,postcode,3431LN,addr
 430401147,opening_hours,Mo-Fr 08:00-21:00; Sa 08:00-20:00,regular
 430401147,housenumber,65,addr
 507959267,name,Far East,regular

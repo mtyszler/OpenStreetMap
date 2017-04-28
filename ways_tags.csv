@@ -2513,7 +2513,7 @@ id,key,value,type
 54685710,street,Televisiebaan,addr
 54685710,date,2014-06-14,source
 54685710,country,NL,addr
-54685710,postcode,3402 VH,addr
+54685710,postcode,3402VH,addr
 54685710,housenumber,102,addr
 54687117,source,3dShapes,regular
 54687117,building,yes,regular
@@ -9014,7 +9014,7 @@ id,key,value,type
 279514547,wheelchair,yes,regular
 279514547,street,Ringwade,addr
 279514547,date,2014-03-24,source
-279514547,postcode,3439 LM,addr
+279514547,postcode,3439LM,addr
 279514547,housenumber,1,addr
 280026554,lit,yes,regular
 280026554,foot,no,regular
