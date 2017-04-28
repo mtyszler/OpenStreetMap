@@ -3,6 +3,8 @@ from sqlite3 import OperationalError
 
 import pandas
 
+# from https://github.com/awesome5team/General-Resources-Box/issues/7
+# from http://stackoverflow.com/questions/19472922/reading-external-sql-script-in-python
 def executeScriptsFromFile(filename):
     # Open and read the file as a single buffer
     fd = open(filename, 'r')
