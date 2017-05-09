@@ -11755,7 +11755,7 @@ div#notebook {
 This is in the Scope of the Udacity Nanodegree, P3: Wrangle OpenStreetMap Data</p>
 <p><strong> Author </strong>: <a href="mailto:tyszler.jobs@gmail.com">Marcelo Tyszler</a></p>
 <p><strong> Start Date </strong>: 04/Mar/2017</p>
-<p><strong> Today's Date </strong>: 28/Apr/2017</p>
+<p><strong> Today's Date </strong>: 09/May/2017</p>
 
 </div>
 </div>
@@ -11801,8 +11801,9 @@ This is in the Scope of the Udacity Nanodegree, P3: Wrangle OpenStreetMap Data</
 <h2 id="Initial-exploration">Initial exploration<a class="anchor-link" href="#Initial-exploration">&#182;</a></h2><p>After loading a small sample of the data (taking every 10th entry in the full data), I explored the database.</p>
 <p>I noticed the (initial) issues:</p>
 <ul>
-<li>Many unique keys: for example, <em>postal_code</em> and <em>postcode</em> should be combined</li>
-<li>Post codes where not uniform (for example "3431 LN" and "3523ED")</li>
+<li><strong>ISSUE 1</strong>: Many unique keys: for example, <em>postal_code</em> and <em>postcode</em> should be combined</li>
+<li><strong>ISSUE 2</strong>: Post codes where not uniform (for example "3431 LN" and "3523ED")</li>
+<li><strong>ISSUE 3</strong>: Phone numbers where not uniform</li>
 </ul>
 
 </div>
@@ -11813,12 +11814,12 @@ This is in the Scope of the Udacity Nanodegree, P3: Wrangle OpenStreetMap Data</
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Many-unique-keys">Many unique keys<a class="anchor-link" href="#Many-unique-keys">&#182;</a></h3><p>I ran the following query:</p>
+<h3 id="ISSUE-1:-Many-unique-keys"><strong>ISSUE 1</strong>: Many unique keys<a class="anchor-link" href="#ISSUE-1:-Many-unique-keys">&#182;</a></h3><h4 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h4><p>I ran the following query:</p>
 
 </div>
 </div>
 </div>select  key, count(*) as count 
-from ways_tags
+from nodes_tags
 group by key
 order by count
 <div class="cell border-box-sizing text_cell rendered">
@@ -11826,7 +11827,8 @@ order by count
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This returned 134 unique rows, which I found suspiciously high. I did not investigate all details, but I did compare the top returning with the lower returning keys. Here I noticed, for example, that <em>postal_code</em> appeared with count 2, as opposed to <em>postcode</em> with count 5614. Therefore I decided to merge those in the python import code:</p>
+<p>This returned 134 unique rows, which I found suspiciously high. I did not investigate all details, but I did compare the top returning with the lower returning keys. Here I noticed, for example, that <em>postal_code</em> appeared with count 2, as opposed to <em>postcode</em> with count 5614.</p>
+<h4 id="Solution">Solution<a class="anchor-link" href="#Solution">&#182;</a></h4><p>I decided to merge postal_code and postcode in the python import code:</p>
 
 </div>
 </div>
@@ -11839,12 +11841,71 @@ if potential_key == "postal_code":
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Clean-Postcodes">Clean Postcodes<a class="anchor-link" href="#Clean-Postcodes">&#182;</a></h3><p>Browsing through the data revealed 2 problems with postcodes:</p>
+<h3 id="ISSUE-2:-Postcodes-incomplete-and-not-uniform"><strong>ISSUE 2</strong>: Postcodes incomplete and not uniform<a class="anchor-link" href="#ISSUE-2:-Postcodes-incomplete-and-not-uniform">&#182;</a></h3><h4 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h4><p>Browsing through the data revealed 2 problems with postcodes:</p>
 <ul>
 <li>Not uniform on the white space between 4 numbers and letters</li>
 <li>Incomplete postcodes having only 4 numbers</li>
 </ul>
-<p>To solve this, I first removed any whites spaces by adding the codes into the python db_prep.py code:</p>
+<p>This can be seen in the following excerpt:</p>
+
+</div>
+</div>
+</div>### examine postcodes:
+select value from nodes_tags where key = "postcode" limit 10
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead><tr>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3432</td>
+</tr>
+<tr>
+<td>3438</td>
+</tr>
+<tr>
+<td>3437 PJ</td>
+</tr>
+<tr>
+<td>3433 ZB</td>
+</tr>
+<tr>
+<td>3431 LN</td>
+</tr>
+<tr>
+<td>3523ED</td>
+</tr>
+<tr>
+<td>3523EJ</td>
+</tr>
+<tr>
+<td>3523ED</td>
+</tr>
+<tr>
+<td>3522HR</td>
+</tr>
+<tr>
+<td>3438AA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Solution">Solution<a class="anchor-link" href="#Solution">&#182;</a></h4><p>The solution was implemented in 2 parts.</p>
+<h5 id="Part-1">Part 1<a class="anchor-link" href="#Part-1">&#182;</a></h5><p>First removed any whites spaces by adding the codes into the python db_prep.py code:</p>
 
 </div>
 </div>
@@ -11870,16 +11931,146 @@ if potential_key == "postal_code":
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To improve the postcodes with 4 digits only, I decided to use the information in the database to improve itself.</p>
+<h5 id="Part-2">Part 2<a class="anchor-link" href="#Part-2">&#182;</a></h5><p>To improve the postcodes with 4 digits only, I decided to use the information in the database to improve itself.</p>
 <p>The approach was to find the closest node point with full postcode that started with the same 4 letters and use that full postcode as replacement.</p>
 <p>This was done by combining the following subqueries:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead><tr>
+<th>problem_postcode</th>
+<th>key</th>
+<th>lat</th>
+<th>lon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3432</td>
+<td>postcode</td>
+<td>52.0101421</td>
+<td>5.0832539</td>
+</tr>
+<tr>
+<td>3438</td>
+<td>postcode</td>
+<td>52.0452865</td>
+<td>5.101346</td>
+</tr>
+<tr>
+<td>3439</td>
+<td>postcode</td>
+<td>52.0398723</td>
+<td>5.1011803</td>
+</tr>
+</tbody>
+</table>
 
 </div>
 </div>
 </div>## Find the Matching postcodes
 select substr(value,1,4) as match_postcode, value as full_postcode, key, lat, lon
 from nodes_tags join nodes using(id)
-where key = "postcode" and length(value)>4) 
+where key = "postcode" and length(value)>4
+limit 10
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead><tr>
+<th>match_postcode</th>
+<th>full_postcode</th>
+<th>key</th>
+<th>lat</th>
+<th>lon</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3437</td>
+<td>3437PJ</td>
+<td>postcode</td>
+<td>52.0601311</td>
+<td>5.0773771</td>
+</tr>
+<tr>
+<td>3433</td>
+<td>3433ZB</td>
+<td>postcode</td>
+<td>52.0040012</td>
+<td>5.0958811</td>
+</tr>
+<tr>
+<td>3431</td>
+<td>3431LN</td>
+<td>postcode</td>
+<td>52.0281712</td>
+<td>5.0807074</td>
+</tr>
+<tr>
+<td>3523</td>
+<td>3523ED</td>
+<td>postcode</td>
+<td>52.0721184</td>
+<td>5.1245909</td>
+</tr>
+<tr>
+<td>3523</td>
+<td>3523EJ</td>
+<td>postcode</td>
+<td>52.072329</td>
+<td>5.123319</td>
+</tr>
+<tr>
+<td>3523</td>
+<td>3523ED</td>
+<td>postcode</td>
+<td>52.0721409</td>
+<td>5.1244553</td>
+</tr>
+<tr>
+<td>3522</td>
+<td>3522HR</td>
+<td>postcode</td>
+<td>52.0662376</td>
+<td>5.114512</td>
+</tr>
+<tr>
+<td>3438</td>
+<td>3438AA</td>
+<td>postcode</td>
+<td>52.0377198</td>
+<td>5.0928945</td>
+</tr>
+<tr>
+<td>3526</td>
+<td>3526KV</td>
+<td>postcode</td>
+<td>52.0616652</td>
+<td>5.1101707</td>
+</tr>
+<tr>
+<td>3431</td>
+<td>3431HC</td>
+<td>postcode</td>
+<td>52.0276385</td>
+<td>5.0827466</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -11910,7 +12101,45 @@ group by problem_postcode
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This was fed into the python create_db code</p>
+<table>
+<thead><tr>
+<th>id</th>
+<th>problem_postcode</th>
+<th>full_postcode</th>
+<th>min(distance)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>44844351</td>
+<td>3432</td>
+<td>3432ND</td>
+<td>5.33922370001306e-07</td>
+</tr>
+<tr>
+<td>45003711</td>
+<td>3438</td>
+<td>3438AM</td>
+<td>8.83898600042912e-08</td>
+</tr>
+<tr>
+<td>4352876693</td>
+<td>3439</td>
+<td>3439NK</td>
+<td>1.35280450000897e-07</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This was fed into the python create_db code, updating the problem postcode with the closest match</p>
 
 </div>
 </div>
@@ -11925,6 +12154,173 @@ for problem_postcode in results:
 
     db.execute(sql)
     db.commit()
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="ISSUE-3:-Phone-numbers-not-uniform"><strong>ISSUE 3</strong>: Phone numbers not uniform<a class="anchor-link" href="#ISSUE-3:-Phone-numbers-not-uniform">&#182;</a></h3><h4 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h4><p>I ran the following query:</p>
+
+</div>
+</div>
+</div>select value from nodes_tags where key = "phone"
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead><tr>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>030-6041144</td>
+</tr>
+<tr>
+<td>+31 (0)30 63 80</td>
+</tr>
+<tr>
+<td>030-6056479</td>
+</tr>
+<tr>
+<td>+31-30-2804145</td>
+</tr>
+<tr>
+<td>+31-30-6006339</td>
+</tr>
+<tr>
+<td>+31302803890</td>
+</tr>
+<tr>
+<td>+31-30-6090821</td>
+</tr>
+<tr>
+<td>+31 (0) 302887760</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The above excerpt reveals that there are the following inconsistencies in the way phone numbers are inserted:</p>
+<ul>
+<li>Inclusion or absence of the Dutch international code (+31)</li>
+<li>Spacing in between the numbers</li>
+<li>Use or not of hyphen "-" to separate regional code</li>
+<li>Insertion or not of (0), which is a version for local calling</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="Solution">Solution<a class="anchor-link" href="#Solution">&#182;</a></h4><p>I decided to reshape all phone numbers in the mask: +31 YY XXX XXXX, where:</p>
+<ul>
+<li>+31 is the Dutch international code</li>
+<li>YY is the regional code, which in this case will be typically 30</li>
+<li>XXX XXXX is the phone number, a combination of 3 + 4 numerical characters</li>
+<li>space is used for readability</li>
+</ul>
+<p>This implemented by creating the auxiliar following python code into the db_prep.py:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span></span><span class="k">def</span> <span class="nf">improve_phonenumbers</span><span class="p">(</span><span class="n">phonenumber</span><span class="p">):</span>
+    <span class="c1"># remove all special chars:</span>
+    <span class="k">print</span> <span class="n">phonenumber</span>
+    <span class="n">clean_number</span> <span class="o">=</span> <span class="n">phonenumber</span>
+    <span class="c1"># remove (0)</span>
+    <span class="n">clean_number</span> <span class="o">=</span>  <span class="n">clean_number</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;(0)&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="c1"># remove all non digits</span>
+    <span class="n">clean_number</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">r&#39;\D&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">clean_number</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_number</span><span class="p">)</span> <span class="o">==</span> <span class="mi">11</span><span class="p">:</span>
+        <span class="c1"># full phone number</span>
+        <span class="n">formatted_number</span> <span class="o">=</span>  <span class="s1">&#39;+{0} {1} {2}-{3}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">clean_number</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">clean_number</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">clean_number</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">],</span> <span class="n">clean_number</span><span class="p">[</span><span class="mi">7</span><span class="p">:])</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">clean_number</span><span class="p">)</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="c1"># partial phone number, no international code, starting with 0</span>
+        <span class="n">formatted_number</span> <span class="o">=</span>  <span class="s1">&#39;+31 {0} {1}-{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">clean_number</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">clean_number</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="n">clean_number</span><span class="p">[</span><span class="mi">6</span><span class="p">:])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># invalid number</span>
+        <span class="n">formatted_number</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">formatted_number</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>After the code, the same query returned</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<table>
+<thead><tr>
+<th>value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+31 30 604-1144</td>
+</tr>
+<tr>
+<td><em>NULL</em></td>
+</tr>
+<tr>
+<td>+31 30 605-6479</td>
+</tr>
+<tr>
+<td>+31 30 280-4145</td>
+</tr>
+<tr>
+<td>+31 30 600-6339</td>
+</tr>
+<tr>
+<td>+31 30 280-3890</td>
+</tr>
+<tr>
+<td>+31 30 609-0821</td>
+</tr>
+<tr>
+<td>+31 30 288-7760</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -12239,19 +12635,30 @@ limit 10
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Other-ideas:">Other ideas:<a class="anchor-link" href="#Other-ideas:">&#182;</a></h1><ul>
-<li>Further improvement can be done by cross check externally the postcodes</li>
-<li><p>Certain tags could be re-written to a more intuitively format. For example these tags refer to a cell tower:</p>
+<h1 id="Other-ideas:">Other ideas:<a class="anchor-link" href="#Other-ideas:">&#182;</a></h1><h2 id="Idea-1:">Idea 1:<a class="anchor-link" href="#Idea-1:">&#182;</a></h2><p>Further improvement can be done by cross checking externally the postcodes. Since all nodes have lat and lon values, this can be used to search on a mapping of postcodes to enrich this dataset</p>
+<h3 id="Benefits:">Benefits:<a class="anchor-link" href="#Benefits:">&#182;</a></h3><p>The most direct benefit is the completeness of the database.</p>
+<p>Another benefit is the avoidance of user input postcodes, which are error prone.</p>
+<h3 id="Antecipated-Issues:">Antecipated Issues:<a class="anchor-link" href="#Antecipated-Issues:">&#182;</a></h3><p>Using an external database has also its challenges. A user populated database will also suffer from user errors. A commercial database will have costs and are not necessarily error free.</p>
+<p>Moreover, it will require the technicall programming of the matching, which shall also cost some time.</p>
+<h2 id="Idea-2:">Idea 2:<a class="anchor-link" href="#Idea-2:">&#182;</a></h2><p>Certain tags could be re-written to a more intuitively format. For example these tags refer to a cell tower:</p>
 
-<pre><code>  &lt;tag k="height" v="21" /&gt;
-  &lt;tag k="man_made" v="tower" /&gt;
-  &lt;tag k="technology" v="UMTS" /&gt;
-  &lt;tag k="tower:type" v="communication" /&gt;
+<pre><code>    &lt;tag k="height" v="21" /&gt;
+    &lt;tag k="man_made" v="tower" /&gt;
+    &lt;tag k="technology" v="UMTS" /&gt;
+    &lt;tag k="tower:type" v="communication" /&gt;
 
 </code></pre>
-<p>It would be clearer to have all these 4 entries with a tag type of tower, instead of 'regular' and just one as 'tower', and the values as in there</p>
-</li>
-</ul>
+<p>It would be clearer to have all these 4 entries with a tag type of tower, instead of 'regular' and just one as 'tower', and the values as in there.</p>
+<h3 id="Benefits:">Benefits:<a class="anchor-link" href="#Benefits:">&#182;</a></h3><p>The main benefit is the improving of the search options. If the type is set as 'tower', it is much straight forward to query for heights, tower type, etc.</p>
+<p>Another benefit is that one of the tags would become redundant and could be removed, reducing the size of the database.</p>
+<h3 id="Antecipated-Issues:">Antecipated Issues:<a class="anchor-link" href="#Antecipated-Issues:">&#182;</a></h3><p>A potential problem that would emerge is the potential lack of uniformity across different tower types entered in the database.</p>
+<p>Moreover, if other queries had already been built with the current data structure, they would not work anymore. Therefore, if I would not be able to control those, changes in the structure would create negative impacts.</p>
+<h2 id="Idea-3:">Idea 3:<a class="anchor-link" href="#Idea-3:">&#182;</a></h2><p>Include bicycle path data.</p>
+<p>In the Netherlands, the bike network is massive, including bikepaths, knot points and routes. Data from Openstreemap is already used by the Open Fiets Project (Fiets means bike in Dutch). This can be seen here: <a href="http://www.openfietsmap.nl/">http://www.openfietsmap.nl/</a></p>
+<p>Data from either this project or other bicyle routes source could be incorporated into the Open Street Map data.</p>
+<h3 id="Benefits:">Benefits:<a class="anchor-link" href="#Benefits:">&#182;</a></h3><p>The direct benefit is the richness of information added to the dataset. This would be a huge benefit to the bikers using Open Street Map Data.</p>
+<p>A second benefit is the cross-usabilty of user data, increasing the value of open source data.</p>
+<h3 id="Antecipated-Issues:">Antecipated Issues:<a class="anchor-link" href="#Antecipated-Issues:">&#182;</a></h3><p>Using another source of data is also not without its challenges. Auditing and cleaning would be required, and the technicall importing is also not necessarily trivial.</p>
 
 </div>
 </div>
