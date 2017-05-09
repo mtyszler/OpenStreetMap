@@ -163,8 +163,9 @@ import xml.etree.cElementTree as ET
 import cerberus
 
 import db_prep_schema
+import re
 
-OSM_PATH = "nieuwegein_sample.osm"
+#OSM_PATH = "nieuwegein_sample.osm"
 OSM_PATH = "nieuwegein.osm"
 
 NODES_PATH = "nodes.csv"
@@ -189,6 +190,28 @@ WAY_NODES_FIELDS = ['id', 'node_id', 'position']
 def improve_postcode(postcode):
     # remove white space
     return postcode.replace(" ", "")
+
+def improve_phonenumbers(phonenumber):
+    # remove all special chars:
+    print phonenumber
+    clean_number = phonenumber
+    # remove (0)
+    clean_number =  clean_number.replace("(0)","")
+    # remove all non digits
+    clean_number = re.sub(r'\D', "", clean_number)
+
+    if len(clean_number) == 11:
+        # full phone number
+        formatted_number =  '+{0} {1} {2}-{3}'.format(clean_number[0:2], clean_number[2:4], clean_number[4:7], clean_number[7:])
+    elif len(clean_number) == 10:
+        # partial phone number, no international code, starting with 0
+        formatted_number =  '+31 {0} {1}-{2}'.format(clean_number[1:3], clean_number[3:6], clean_number[6:])
+    else:
+        # invalid number
+        formatted_number = ""
+
+    return formatted_number
+
 
 def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS,
                   problem_chars=PROBLEMCHARS, default_tag_type='regular'):
@@ -227,6 +250,9 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
 
                     if potential_key == "postcode":
                         content.attrib['v'] = improve_postcode(content.attrib['v'])
+
+                    if potential_key == "phone":
+                        content.attrib['v'] = improve_phonenumbers(content.attrib['v'])
 
                     # top level info:
                     temp['id'] = element.attrib['id']
@@ -268,6 +294,8 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                     if potential_key == "postcode":
                         content.attrib['v'] = improve_postcode(content.attrib['v'])
 
+                    if potential_key == "phone":
+                        content.attrib['v'] = improve_phonenumbers(content.attrib['v'])
 
                     # top level info:
                     temp['id'] = element.attrib['id']
