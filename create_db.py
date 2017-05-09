@@ -45,8 +45,9 @@ db.commit()
 
 
 # Fix postcodes
+# nodes
 # Create a list of the closest full postcode. based on the lat, lon distance:
-sql = executeScriptsFromFile('support_file_for_post_codes.sql')
+sql = executeScriptsFromFile('support_file_for_post_codes_nodes.sql')
 results = c.fetchall()
 #print results
 # results: id, problem_postcode, best_match_postcode
@@ -61,6 +62,5 @@ for problem_postcode in results:
     db.commit()
 
 
-
-
+# Fix phone numbers
 db.close()
